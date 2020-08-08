@@ -3,13 +3,24 @@ from nsetools import Nse
 nse = Nse()
 
 
+class driver(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        mainframe = tk.Frame(self)
+        mainframe.grid(column=0, row=0, sticky="nwes")
+        mainframe.columnconfigure(0, weight=1)
+        mainframe.rowconfigure(0, weight=1)
+        home = homePage(mainframe, self)
+        show_frame(home)
+
+
 class stock(tk.Frame):
     def __init__(self, stockCode, parent):
         self.code = stockCode.get()
         self.stockData = nse.get_quote(self.code)
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Market data of " +
-                         self.code)
+                         self.stockData['companyName'])
         label.grid(column=2, row=1, sticky="n")
         label = tk.Label(self, text="Market depth ")
         label.grid(column=1, row=2, sticky="n")
@@ -32,8 +43,9 @@ def showStock(code, parent):
 
 
 class homePage(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, driver):
         self.code = tk.StringVar()
+        self.par=parent
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Start Page")
         label.grid(column=1, row=1, sticky="e")
@@ -42,14 +54,14 @@ class homePage(tk.Frame):
         b = tk.Button(self, text="Start",
                       command=lambda: showStock(self.code, parent))
         b.grid(column=2, row=2, sticky="s")
+        search.focus()
+        # driver.bind('<Return>', lambda : self.s)
 
+    """ def s(self):
+        cc = self.code
+        parent = self.par
+        showStock(cc, parent) """
 
-root = tk.Tk()
+root = driver()
 root.title("NSE Tracker")
-mainframe = tk.Frame(root)
-mainframe.grid(column=0, row=0, sticky="nwes")
-mainframe.columnconfigure(0, weight=1)
-mainframe.rowconfigure(0, weight=1)
-home = homePage(mainframe)
-show_frame(home)
 root.mainloop()
